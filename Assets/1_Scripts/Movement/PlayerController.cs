@@ -1,30 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ECM.Components;
+using ECM.Controllers;
 using UnityEngine;
 //using UnityEngine.Input;
 
 namespace Rocket.Movement
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : BaseCharacterController
     {
-        CharacterController cmp_controller;
-
-        void Awake()
+        protected override void HandleInput()
         {
-            cmp_controller = GetComponent<CharacterController>();
+            // Toggle pause / resume.
+            // By default, will restore character's velocity on resume (eg: restoreVelocityOnResume = true)
+            if (Input.GetKeyDown(KeyCode.P))
+                pause = !pause;
+
+            // Handle user input
+            moveDirection = new Vector3
+            {
+                x = Input.GetAxisRaw("Horizontal"),
+                y = 0.0f,
+                z = 0.0f
+            };
+
+            jump = Input.GetButton("Jump");
         }
 
-        // Update is called once per frame
-        void Update()
+        protected override void Animate()
         {
-            
-            
-                Vector3 moveVector = new Vector3(Input.GetAxis("Horizontal"),0,0);
-                print(moveVector);
-                cmp_controller.Move(moveVector * Time.deltaTime);
-            
- 
-        
+            Animator cmp_animator = GetComponent<Animator>();
+            cmp_animator.SetFloat("forwardSpeed", GetComponent<CharacterMovement>().forwardSpeed);
         }
     }
 }
